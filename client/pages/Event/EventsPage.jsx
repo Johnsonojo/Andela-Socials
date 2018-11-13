@@ -65,8 +65,6 @@ class EventsPage extends React.Component {
   }
 
   /**
-   *
-   *
    * @param {*} prevProps
    * @param {*} prevState
    * @returns
@@ -195,6 +193,7 @@ class EventsPage extends React.Component {
 
   render() {
     const { categoryList, eventList } = this.state;
+    const { lastPage } = this.props;
     const catList = Array.isArray(categoryList) ? categoryList.map(item => ({
       id: item.node.id,
       title: item.node.name,
@@ -209,7 +208,7 @@ class EventsPage extends React.Component {
         </div>
         {this.renderEventGallery()}
         <div className="event__footer">
-          { eventList.length >= 9
+          { lastPage
             && <button ref={this.btnRef} onClick={this.loadMoreEvents}
               type="button" className="btn-blue event__load-more-button" id="load-more-btn">
             Load more
@@ -221,8 +220,9 @@ class EventsPage extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  events: state.events,
+  events: state.events.events,
   socialClubs: state.socialClubs,
+  lastPage: state.events.pageInfo.hasNextPage,
 });
 
 export default connect(mapStateToProps, {

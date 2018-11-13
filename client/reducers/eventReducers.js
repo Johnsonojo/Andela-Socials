@@ -18,20 +18,35 @@ import initialState from './initialState';
 
 /**
  * Reducer for one events
- * @param {object} [state=initialState.events]
+ * @param {object} [state=initialState.eventsDetails]
  * @param {object} action
  * @returns {array} new state of the events
  */
-export const events = (state = initialState.events, action) => {
+export const events = (state = initialState.eventsDetails, action) => {
   switch (action.type) {
     case GET_EVENTS:
-      return [...action.payload];
-    case LOAD_MORE_EVENTS:
-      return [...state, ...action.payload];
+      return {
+        ...state, events: action.payload, pageInfo: action.pageInfo,
+      };
+
+    case LOAD_MORE_EVENTS: {
+      const loadedEvents = [...state.events, ...action.payload];
+      return {
+        events: loadedEvents, pageInfo: action.pageInfo,
+      };
+    }
 
     case CREATE_EVENT: {
       const newEvents = { node: action.payload.createEvent.newEvent };
-      return [...state, newEvents];
+      const updatedEvents = [...state.events, newEvents];
+      return {
+        ...state,
+        events: updatedEvents,
+        pageInfo: {
+          ...state.pageInfo,
+          hasNextPage: state.pageInfo.hasNextPage || updatedEvents.length > 9,
+        },
+      };
     }
 
     case UPDATE_EVENT: {
@@ -45,6 +60,7 @@ export const events = (state = initialState.events, action) => {
         return item;
       });
       return {
+        ...state,
         events: updated,
         status: 'updated',
       };
@@ -67,11 +83,11 @@ export const events = (state = initialState.events, action) => {
 
 /**
  * Reducer for uploading an image
- * @param {object} [state=initialState.events]
+ * @param {object} [state=initialState.eventsDetails.events]
  * @param {object} action
  * @param {array}
  */
-export const uploadImage = (state = initialState.events, action) => {
+export const uploadImage = (state = initialState.eventsDetails.events, action) => {
   switch (action.type) {
     case UPLOAD_IMAGE: {
       const imageUploaded = {

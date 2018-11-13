@@ -28,6 +28,7 @@ export const getEventsList = ({
   .then(data => dispatch({
     type: after ? LOAD_MORE_EVENTS : GET_EVENTS,
     payload: data.data.eventsList.edges,
+    pageInfo: data.data.eventsList.pageInfo,
     error: false,
   }))
   .catch(error => handleError(error, dispatch));
