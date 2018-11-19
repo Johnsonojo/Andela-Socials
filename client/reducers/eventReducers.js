@@ -67,7 +67,7 @@ export const events = (state = initialState.eventsDetails, action) => {
     }
 
     case DEACTIVATE_EVENT: {
-      return state.filter(item => item.node.id !== action.payload.id);
+      return state.events.filter(item => item.node.id !== action.payload.id);
     }
 
     case SIGN_OUT:
