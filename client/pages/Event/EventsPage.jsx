@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Calendar from '../../components/common/Calendar';
 import EventFilter from '../../components/filter/EventFilter';
@@ -8,7 +9,6 @@ import formatDate from '../../utils/formatDate';
 import { getEventsList, createEvent } from '../../actions/graphql/eventGQLActions';
 import { getCategoryList } from '../../actions/graphql/categoryGQLActions';
 import EventNotFound from '../../components/EventNotFound';
-
 import mapListToComponent from '../../utils/mapListToComponent';
 
 /**
@@ -154,7 +154,11 @@ class EventsPage extends React.Component {
   }
 
   render() {
-    const { categoryList, hasNextPage } = this.state;
+    const {
+      categoryList,
+      hasNextPage,
+    } = this.state;
+    const { createEventBtn } = this.props;
     const catList = Array.isArray(categoryList) ? categoryList.map(item => ({
       id: item.node.id,
       title: item.node.name,
@@ -173,10 +177,13 @@ class EventsPage extends React.Component {
             Load more
           </button>
         </div>
+        {createEventBtn()}
       </div>
     );
   }
 }
+
+EventsPage.propTypes = { createEventBtn: PropTypes.func.isRequired };
 
 const mapStateToProps = state => ({
   events: state.events,

@@ -213,10 +213,9 @@ class Dashboard extends Component {
           />
           <Route path="/invite/:inviteHash" component={Invite} />
           <Route path="/events" render={() => <EventsPage />} />
-          <Route path="/dashboard" render={() => <EventsPage />} />
+          <Route path="/dashboard" render={() => <EventsPage createEventBtn={() => this.renderCreateEventButton(categories)} />} />
           <Route path="*" component={NotFound} />
         </Switch>
-        {this.renderCreateEventButton(categories)}
         <Modal {...this.props} />
       </ModalContextProvider>
     );
