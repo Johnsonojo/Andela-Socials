@@ -10,6 +10,7 @@ import { getEventsList, createEvent } from '../../actions/graphql/eventGQLAction
 import { getCategoryList } from '../../actions/graphql/categoryGQLActions';
 import EventNotFound from '../../components/EventNotFound';
 import mapListToComponent from '../../utils/mapListToComponent';
+import { ModalContextCreator } from '../../components/Modals/ModalContext';
 
 /**
  * @description  contains events dashboard page
@@ -47,7 +48,9 @@ class EventsPage extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const {
-      events: { eventList, pageInfo: { hasNextPage } }, socialClubs,
+      events: {
+        eventList, pageInfo: { hasNextPage },
+      }, socialClubs,
     } = nextProps;
     const eventLength = eventList.length;
     const lastEventItemCursor = eventLength ? eventList[eventLength - 1].cursor : '';
@@ -153,12 +156,50 @@ class EventsPage extends React.Component {
     return <EventNotFound statusMessage="404" mainMessage="Events not found" />;
   }
 
+  /**
+  * @description It renders the create event FAB button
+  *
+   * @memberof EventsPage
+   */
+  renderCreateEventButton = () => (
+    <ModalContextCreator.Consumer>
+      {
+        ({
+          activeModal,
+          openModal,
+        }) => {
+          // TODO: This should be removed, duplicate naming
+          const {
+            categories, createEvent, uploadImage,
+          } = this.props;
+          if (activeModal) return null;
+          return (
+            <button
+              type="button"
+              onClick={() => openModal('CREATE_EVENT', {
+                modalHeadline: 'create event',
+                formMode: 'create',
+                formId: 'event-form',
+                categories,
+                createEvent,
+                uploadImage,
+                updateEvent: () => '',
+              })}
+              className="create-event-btn"
+            >
+              <span className="create-event-btn__icon">+</span>
+            </button>
+          );
+        }
+      }
+    </ModalContextCreator.Consumer>
+  );
+
   render() {
     const {
       categoryList,
       hasNextPage,
     } = this.state;
-    const { createEventBtn } = this.props;
     const catList = Array.isArray(categoryList) ? categoryList.map(item => ({
       id: item.node.id,
       title: item.node.name,
@@ -177,13 +218,15 @@ class EventsPage extends React.Component {
             Load more
           </button>
         </div>
-        {createEventBtn()}
+        {this.renderCreateEventButton()}
       </div>
     );
   }
 }
 
-EventsPage.propTypes = { createEventBtn: PropTypes.func.isRequired };
+EventsPage.defaultProps = { categories: [] };
+
+EventsPage.propTypes = { categories: PropTypes.arrayOf(PropTypes.shape({})) };
 
 const mapStateToProps = state => ({
   events: state.events,
