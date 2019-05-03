@@ -96,34 +96,47 @@ class AndelaUserProfile(models.Model):
         return "@{}".format(self.user.username)
 
     @classmethod
-    def create_user_profile(cls, user_data, user_id):
+    def create_user_profile(cls, user_data, user_id, slack_auth=False):
         """It helps to create a new user profile
         :param user_data: A dictionary containing user data (
             required elements are  email, picture)
         :param user_id: An Existing User ID
         :return: It newly created user_profile data
         """
-        user_profile = AndelaUserProfile.objects.create(
-            slack_id=get_slack_id({"email": user_data["email"]}),
-            user_id=user_id, google_id=user_data['id'],
-            user_picture=user_data['picture'])
 
-        if user_profile:
+        if slack_auth:
+            user_info = {
+                'user_id': user_id,
+                'slack_id': user_data['id'],
+                'user_picture': user_data['image_72']
+            }
+        else:
+            user_info = {
+                'user_id': user_id,
+                'google_id': user_data['id'],
+                'user_picture': user_data['picture']
+            }
+        user_profile = AndelaUserProfile.objects.create(**user_info)
+
+        if user_profile and not slack_auth:
             #  It runs background user profile update.
             BackgroundTaskWorker.start_work(user_profile.check_diff_and_update,
                                             (user_data,))
         return user_profile
 
     @classmethod
-    def get_and_update_user_profile(cls, user_data):
+    def get_and_update_user_profile(cls, user_data, slack_auth=False):
         """It fetches user profile
         :param user_data: it contains andela user google id
         :return:
         """
 
-        user_profile = AndelaUserProfile.objects.get(google_id=user_data['id'])
+        if slack_auth:
+            user_profile = AndelaUserProfile.objects.get(slack_id=user_data['id'])
+        else:
+            user_profile = AndelaUserProfile.objects.get(google_id=user_data['id'])
 
-        if user_profile:
+        if user_profile and not slack_auth:
             #  It runs background user profile update.
             BackgroundTaskWorker.start_work(user_profile.check_diff_and_update,
                                             (user_data,))

@@ -48,6 +48,9 @@ urlpatterns = [
     url(r'^event/(?P<pk>[0-9]+)/?$', views.EventDetail.as_view(),
         name='event_detail'),
 
+    url(r'^slack/oauthcallback/?$', views.SlackOauthCallback.as_view(),
+        name='slack_oauth_callback'),
+
     url(r'^oauthcallback/?$', views.OauthCallback.as_view(),
         name='oauth_callback'),
 ]

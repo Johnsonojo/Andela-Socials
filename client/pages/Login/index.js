@@ -21,6 +21,8 @@ dotenv.config();
 const Login = (props) => {
   const previousLocation = props.location.state ? props.location.state.previousLocation : null
   const redirectUrl = `${process.env.ANDELA_API_BASE_URL}/login?redirect_url=${previousLocation ? previousLocation : process.env.FRONTEND_BASE_URL}`;
+  // const slackAuthUrl = `https://slack.com/oauth/authorize?scope=identity.basic&client_id=${process.env.SLACK_APP_CLIENT_ID}&redirect_uri=${previousLocation ? previousLocation : process.env.FRONTEND_BASE_URL}&state=q5rfdr34r434tf`;
+  const slackAuthUrl = `${process.env.SLACK_AUTH_URL}&redirect_uri=${previousLocation ? previousLocation : process.env.FRONTEND_BASE_URL}`;
   if (isLoggedIn()) {
     return (<Redirect to="/events" />);
   }
@@ -40,6 +42,9 @@ const Login = (props) => {
         </p>
         <a className="login_container__btn" href={redirectUrl}>
           Join the creed now!
+        </a>
+        <a href={slackAuthUrl}>
+          <img alt="Sign in with slack" src="https://api.slack.com/img/sign_in_with_slack.png" />
         </a>
       </div>
     </div>

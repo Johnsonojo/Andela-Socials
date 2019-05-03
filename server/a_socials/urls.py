@@ -21,6 +21,7 @@ from api import views
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
     url(r'^api/v1/?', include('api.urls', namespace="api_v1")),
+    url(r'^slack/', include('django_slack_oauth.urls')),
     url(r'^', include('graphql_schemas.urls', namespace="graphql")),
     url(r'^/', include('api.urls', namespace="api")),
     url(r'^.*/?', views.DashBoardView.as_view(), name='base'),

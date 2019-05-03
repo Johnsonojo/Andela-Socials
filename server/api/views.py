@@ -242,3 +242,15 @@ class OauthCallback(APIView):
             return HttpResponseForbidden()
         else:
             return Response({'message': 'Authorization was a success'})
+
+class SlackOauthCallback(APIView):
+    authentication_classes = ()
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        # token = request.token
+
+        # if not token:
+        #     return Response({'message': 'Slack auth failed. Token not provided'})
+
+        return Response({'message': 'Authorization was a success'})

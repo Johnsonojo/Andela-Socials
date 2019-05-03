@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'graphene_django',
     'graphql_schemas',
     'django_crontab',
+    'django_slack_oauth',
 ]
 
 CRONJOBS = [
@@ -222,3 +223,12 @@ GOOGLE_OAUTH2_STORAGE_MODEL = {
 }
 
 FRONTEND_BASE_URL = dotenv.get('FRONTEND_BASE_URL')
+
+SLACK_CLIENT_ID = "237821266692.615412386832"
+SLACK_CLIENT_SECRET = dotenv.get('SLACK_APP_CLIENT_SECRET')
+SLACK_SCOPE = 'identity.basic, identity.email, identity.team, identity.avatar'
+# pipeline for slack oauth
+SLACK_PIPELINES = [
+    'api.slack_oauth.get_or_create_user',
+]
+SLACK_SUCCESS_REDIRECT_URL = dotenv.get('SLACK_SUCCESS_REDIRECT_URL')
