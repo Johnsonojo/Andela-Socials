@@ -2,7 +2,7 @@
 @import '../colors.scss';
 .navbar {
   overflow: hidden;
-  box-shadow: 0rem 0.5rem 1rem 0rem rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.3rem 0.2rem 0 rgba(0,0,0,0.15);
   background: $white;
   border: none;
 
@@ -57,6 +57,7 @@
   .navbar-brand {
     height: rem(70px);
     width: rem(70px);
+    margin-left: rem(20px);
     @include centered-flex;
     @include mobile(rem(600px)) {
       display: none;
@@ -90,6 +91,7 @@
   }
   &__item {
     padding-left: 3%;
+    margin-right: rem(16px);
     @include mobile(rem(600px)) {
       display: none;
     }
@@ -110,7 +112,6 @@
       box-shadow: rem(-1px) rem(6px) rem(6px) $grey;
       border: 0;
       border-radius: 0;
-      height: 13.187rem;
       width: 10.5rem;
 
       li {
@@ -118,20 +119,6 @@
         height: 2.5rem;
         width: 70%;
         margin: 1em 0 1em 0;
-        &:first-child:after {
-          content: '';
-          position: absolute;
-          bottom: 33%;
-          width: 80%;
-          border-bottom: rem(1px) solid $grey;
-        }
-        &:last-child:before {
-          content: '';
-          position: absolute;
-          bottom: 66%;
-          width: 80%;
-          border-bottom: rem(1px) solid $grey;
-        }
         a {
           color: #ccc;
           font-weight: 300;
@@ -160,6 +147,9 @@
     }
     &__button {
       box-shadow: none;
+      &:active, &:focus {
+        outline: none;
+      }
     }
   }
   .notification-container {

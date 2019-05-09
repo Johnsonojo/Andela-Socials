@@ -1,7 +1,7 @@
 import dotenv
 
 from slackclient import SlackClient
-
+from os import getenv
 dotenv.load()
 
 # instantiate Slack & Twilio clients
@@ -24,8 +24,10 @@ def get_slack_id(user):
     Helper function to get user's slack name.
     """
     members = get_slack_users()
-    user_name = [member for member in members if member.get('profile').get(
-        'email') == user['email']]
+    user_name = [
+        member for member in members
+        if member.get('profile').get('email') == user['email']
+    ]
     return user_name[0].get('id') if user_name else ''
 
 
@@ -43,7 +45,7 @@ def notify_channel(message):
     )
 
 
-def notify_user(message, slack_id):
+def notify_user(message, slack_id, **kwargs):
     """
     Notify the user with the given id with the message
         :param message:
@@ -55,6 +57,7 @@ def notify_user(message, slack_id):
         blocks=message,
         as_user=True,
         reply_broadcast=True,
+        **kwargs,
     )
 
 
@@ -70,7 +73,7 @@ def get_slack_user_timezone(email):
     return ''
 
 
-def new_event_message(message, event_url):
+def new_event_message(message, event_url, event_id, image_url):
     """
     Return slack message to send when new event is created
     """
@@ -79,10 +82,30 @@ def new_event_message(message, event_url):
         "text": {
             "type": "mrkdwn",
             "text": message
-            }
+        }
+    }, {
+        "type": "image",
+        "title": {
+            "type": "plain_text",
+            "text": "Featured Image",
+            "emoji": True
+        },
+        "image_url": image_url,
+        "alt_text": "Featured Image"
     }, {
         "type": "actions",
+        "block_id": "event_actions",
         "elements": [
+            {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "Attend",
+                },
+                "action_id": "attend_event",
+                "style": "primary",
+                "value": event_id
+            },
             {
                 "type": "button",
                 "text": {
@@ -94,3 +117,35 @@ def new_event_message(message, event_url):
             }
         ]
     }]
+
+
+def generate_simple_message(text):
+    """
+    Generate message block
+    :rtype: list
+    :param text:
+    :return: list of dictionary containing the slack markdown message structure
+    """
+    return [{
+        "type": "section",
+        "text": {
+            "type": "mrkdwn",
+            "text": text
+        }
+    }]
+
+
+def get_slack_user_token(code):
+    """
+    Gets the slack user's oauth token in order to make requests
+    on their behalf
+        :param code - the code returned by slack after authorization :
+    """
+    response = slack_client.api_call(
+        "oauth.token",
+        client_id=getenv('SLACK_CLIENT_ID'),
+        client_secret=getenv('SLACK_CLIENT_SECRET'),
+        code=code)
+
+    return response
+
