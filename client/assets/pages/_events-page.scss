@@ -204,8 +204,7 @@ main {
   width: 100%;
   background: var(--neutral-color);
   border-radius: 10px;
-  height: rem(373px);
-
+  min-height: rem(300px);
   .header {
     text-transform: uppercase;
     font-size: 15px;

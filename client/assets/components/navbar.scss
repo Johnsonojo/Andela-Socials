@@ -5,7 +5,13 @@
   box-shadow: 0 0.3rem 0.2rem 0 rgba(0,0,0,0.15);
   background: $white;
   border: none;
-
+  &-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
   a {
     @include centered-flex;
     font-size: rem(20px);

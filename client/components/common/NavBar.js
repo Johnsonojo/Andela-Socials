@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
@@ -39,7 +39,7 @@ const NavBar = (props) => {
     imageUrl,
   } = props;
   return (
-    <Fragment>
+    <div className="navbar-container">
       <nav className="top-navbar">
         <div className="navbar-header">
           <div>
@@ -78,7 +78,7 @@ const NavBar = (props) => {
           <NavMenu to="/dashboard">Dashboard</NavMenu>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 };
 
