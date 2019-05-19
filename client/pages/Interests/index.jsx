@@ -1,7 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import InterestCard from '../../components/cards/InterestCard';
-import interests from '../../fixtures/interests';
+import { createInterests, removeInterests, getUserInterests } from '../../actions/graphql/interestGQLActions'
+import { bindActionCreators } from 'redux';
+
 
 /**
  * @description allows users to select their interests
@@ -11,7 +13,9 @@ import interests from '../../fixtures/interests';
  */
 class Interests extends React.Component {
   state = {
-    interests,
+    interests: [],
+    unjoinedInterests: [],
+    joinInterests: []
   }
 
   /**
@@ -20,21 +24,61 @@ class Interests extends React.Component {
    * @memberof Interests
    * @returns {null}
    */
-  componentDidMount() {
-    // get interests when component mounts
-  }
-
-
-  handleClick = (index, isSelected = true) => {
-    const interests = Object.assign(this.state.interests);
-    interests[index].isSelected = isSelected;
+  async componentDidMount() {
+    const { interests, getUserInterests} = this.props;
+    await getUserInterests();
+    const myInterests = interests.interests.joinedCategories;
     this.setState({
-      interests,
+      interests: myInterests.map(interest => interest.followerCategory)
     });
+
   }
-  
+
+  /**
+   * @description Select a particular interest on click
+   * 
+   * @memberof Interests
+   */
+  handleClick = (category, cancel = false) => {
+    if (cancel) {
+      return this.setState((prevState) => {
+        const { interests } = prevState;
+        const interest = interests.findIndex(interest => interest.id === category.node.id);
+        const unjoinedInterest = interests.splice(interest, 1);
+        return {
+          interests: interests,
+          unjoinedInterests: [...prevState.unjoinedInterests, unjoinedInterest[0]],
+        }
+      })
+    }
+    this.setState((prevState) => ({
+      interests: [...prevState.interests, category.node],
+      joinInterests: [...prevState.joinInterests, category.node]
+    }));
+  }
+
+  /**
+   * @description For creating and removing interests after interests selection 
+   *
+   * @memberof Interests
+   */
+  createInterests = () => {
+    const { unjoinedInterests, joinInterests } = this.state;
+    const interestsToAdd = joinInterests.map(i => i.id);
+    const interestsToRemove = unjoinedInterests.map(i => i.id);
+    if (joinInterests.length > 0) {
+      this.props.createInterests(interestsToAdd)
+    }
+    if (unjoinedInterests.length > 0) {
+      this.props.removeInterests(interestsToRemove);
+    }
+  }
+
+
   render() {
-    const { interests } = this.state;
+    const { categoryList } = this.props;
+    const nextButtonLabel = this.state.interests.length > 0 ? 'Create' : 'Next';
+    const cancelButtonLabel = this.state.interests.length > 0 ? 'Skip' : 'Cancel';
 
     return (
       <div className="interests-page">
@@ -42,24 +86,28 @@ class Interests extends React.Component {
         <p className="interests-page__subheader">Select and deselect interests below.</p>
         <div className="interests">
           {
-            interests.map(({name, isSelected}, index) => {
+            categoryList && categoryList.map((category) => {
+              const { node: { name, id } } = category;
+
               return <InterestCard
-                key={index}
-                index={index}
+                key={id}
+                category={category}
                 name={name}
-                active={isSelected}
-                handleClick={this.handleClick} />
+                handleClick={this.handleClick}
+                active={!!this.state.interests.find(interest => interest.id == id)}
+              />
             })
           }
         </div>
         <footer>
+
           <button
             className="interests__btn interests__btn-cancel"
             type="button"
-          >Cancel</button>
+          >{cancelButtonLabel}</button>
           <button
-            className="interests__btn interests__btn-submit"
-          >Submit</button>
+            className="interests__btn interests__btn-submit" onClick={this.createInterests}
+          > {nextButtonLabel}</button>
         </footer>
       </div>
     );
@@ -67,6 +115,17 @@ class Interests extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  categoryList: state.socialClubs.socialClubs || [],
+  interests: state.interests,
 });
 
-export default connect(mapStateToProps, {})(Interests);
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    getUserInterests,
+    createInterests,
+    removeInterests,
+  },
+  dispatch
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Interests);
