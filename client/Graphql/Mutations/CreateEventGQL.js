@@ -8,7 +8,8 @@ const CREATE_EVENT_GQL = (
   startDate,
   endDate,
   timezone,
-  categoryId
+  categoryId,
+  slackChannel
 ) => ({
   mutation: gql`
     mutation($input: CreateEventInput!){
