@@ -1,0 +1,70 @@
+.slack__modal {
+  position: fixed;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  height: 100vh ;
+  width: 100%;
+  z-index: 900;
+  background-color: rgba($color: #000000, $alpha: 0.4);
+
+  .slack__modal-content {
+    z-index: 1000;
+    height: 30%;
+    width: 33%;
+    background-color: white;
+    border-radius: 5px;
+    min-height: 250px;
+    min-width: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 3%;
+  };
+
+  .slack__modal-flex-container {
+    display: flex;
+    align-items: center;
+    margin: 5%;
+  }
+
+  .slack__modal-icon {
+    margin-right: 5px;
+  }
+
+  .slack__modal-text{
+    text-align: center;
+    font-size: 1em;
+    font-weight: 400;
+  }
+
+  .slack__modal-cancel {
+    color: black;
+    border: 1px solid #365DDB;
+    color: #365DDB;
+  }
+
+  .slack__modal-buttons {
+    display: block;
+  }
+
+  h2 {
+    margin-right: 10px;
+    color: #365DDB;
+  }
+
+  button {
+    width: 100px;
+    padding: 10px;
+    outline: none;
+    border: none;
+    color: white;
+    transition: .1s ease-in-out;
+    margin: 5px 15px;
+    border-radius: 2px;
+    font-weight: 400;
+    max-width: 8.125rem;
+    font-size: .9375rem;
+  }
+}

@@ -11,6 +11,7 @@ import { getCategoryList } from '../../actions/graphql/categoryGQLActions';
 import EventNotFound from '../../components/EventNotFound';
 import mapListToComponent from '../../utils/mapListToComponent';
 import { ModalContextCreator } from '../../components/Modals/ModalContext';
+import SlackModal from '../../components/Modals/SlackModal';
 
 /**
  * @description  contains events dashboard page
@@ -28,6 +29,7 @@ class EventsPage extends React.Component {
       selectedCategory: '',
       eventStartDate: formatDate(Date.now(), 'YYYY-MM-DD'),
       lastEventItemCursor: '',
+      slackModalDisplay: 'none',
     };
     this.getFilteredEvents = this.getFilteredEvents.bind(this);
   }
@@ -140,6 +142,8 @@ class EventsPage extends React.Component {
     });
   }
 
+  closeSlackModal = slackModalDisplay => this.setState({ slackModalDisplay });
+
   /**
   * @description It renders list of event card
   *
@@ -199,6 +203,7 @@ class EventsPage extends React.Component {
     const {
       categoryList,
       hasNextPage,
+      slackModalDisplay,
     } = this.state;
     const catList = Array.isArray(categoryList) ? categoryList.map(item => ({
       id: item.node.id,
@@ -218,6 +223,9 @@ class EventsPage extends React.Component {
             Load more
           </button>
         </div>
+        <SlackModal
+          modalDisplay={slackModalDisplay}
+          closeModal={() => this.closeSlackModal('none')} />
         {this.renderCreateEventButton()}
       </div>
     );
